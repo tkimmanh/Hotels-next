@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.auth-container {
+  height: 100vh;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cl-formButtonPrimary {
+  background: #0000;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 6px 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.cl-formButtonPrimary:hover {
+  background-color: white;
+  color: #000;
+}
+.cl-internal-180wb59 {
+  display: none;
+}
