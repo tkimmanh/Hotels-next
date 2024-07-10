@@ -4,13 +4,13 @@
 
 .auth-container {
   height: 100vh;
-  background: #000;
+  background: white;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .cl-formButtonPrimary {
-  background: #0000;
+  background-color: #000;
   color: #fff;
   border: 1px solid #000;
   border-radius: 5px;
