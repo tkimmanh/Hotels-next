@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/servers/users";
 import { message } from "antd";
 import { UserType } from "@/interfaces";
 import { usePathname } from "next/navigation";
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/spinner";
 
 export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   const [loginUserData, setloginUserData] = React.useState<UserType | null>(

@@ -10,7 +10,12 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
         },
         components: {
           Button: {},
-          Input: {},
+          Input: {
+            borderRadius: 5,
+          },
+          Form: {
+            labelFontSize: 14,
+          },
         },
       }}
     >
