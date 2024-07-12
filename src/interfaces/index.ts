@@ -15,11 +15,14 @@ export interface UserType {
   updatedAt: string;
 }
 
-export interface HotelType {
+export type HotelType = {
   address: string;
   email: string;
   name: string;
   owner: string;
   phone: string;
   media: File | any;
-}
+  _id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};

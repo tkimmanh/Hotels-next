@@ -1,24 +1,45 @@
 "use client";
 import { uploadImageToFirebase } from "@/helpers/image-upload";
 import { HotelType, SuccessResponse } from "@/interfaces";
-import { addHotels } from "@/servers/hotels";
+import { addHotels, updateHotel } from "@/servers/hotels";
 import { Button, Form, Input, message, Upload } from "antd";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-const HotelForm = ({ type }: { type: string }) => {
+const HotelForm = ({
+  type,
+  initalValues,
+}: {
+  type: string;
+  initalValues?: HotelType | null;
+}) => {
   const [uploadFile, setUploadFile] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [exitstingMedia, setExistingMedia] = useState(
+    initalValues?.media || []
+  );
+
+  console.log("initalValues", initalValues?.media);
+
   const router = useRouter();
   const onSubmit = async (values: HotelType) => {
     try {
       setLoading(true);
-      values.media = await uploadImageToFirebase(uploadFile);
+
+      const newMedia = await uploadImageToFirebase(uploadFile);
+      values.media = [...exitstingMedia, ...(newMedia as string[])];
       let response: SuccessResponse = null;
+
       if (type === "create") {
         response = await addHotels(values);
       }
-      if (response?.status === 201) {
+
+      if (type === "update") {
+        response = await updateHotel(initalValues?._id as string, values);
+      }
+
+      if (response?.status === 200) {
         message.success(response.message);
         router.push("/admin/hotels");
       }
@@ -32,6 +53,7 @@ const HotelForm = ({ type }: { type: string }) => {
     <Form
       onFinish={onSubmit}
       layout="vertical"
+      initialValues={initalValues as HotelType}
       className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 "
     >
       <Form.Item
@@ -103,7 +125,30 @@ const HotelForm = ({ type }: { type: string }) => {
       >
         <Input.TextArea placeholder="Address"></Input.TextArea>
       </Form.Item>
-      <div className="col-span-3">
+      <div className="col-span-3 flex">
+        <div className="flex gap-5">
+          {exitstingMedia.map((media: string, index: number) => {
+            return (
+              <div className="flex flex-col border rounded p-3" key={index}>
+                <Image src={media} width={100} height={100} alt={""} />
+                <Button
+                  onClick={() => {
+                    setExistingMedia(
+                      exitstingMedia.filter(
+                        (item: string) => item !== media
+                      ) as any
+                    );
+                  }}
+                  type="dashed"
+                  className="mt-5 text-red-400"
+                >
+                  Remove
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+
         <Upload
           listType="picture-card"
           beforeUpload={(file) => {
