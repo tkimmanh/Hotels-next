@@ -16,6 +16,7 @@ function HotelsTable({ hotels }: { hotels?: HotelType[] }) {
       setLoading(true);
 
       const response = await deleteHotel(id);
+
       if (response.status === 200) {
         message.success(response.message);
       } else {
