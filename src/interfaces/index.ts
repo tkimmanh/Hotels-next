@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+
 export type SuccessResponse = {
   message: string;
   status: number;
@@ -25,4 +27,16 @@ export type HotelType = {
   _id?: string;
   createdAt?: string;
   updatedAt?: string;
+};
+export type RoomsType = {
+  name: string;
+  type: string;
+  rentPerDay: number;
+  amenities: string;
+  bedrooms: string;
+  roomNumber: string;
+  hotel?: string | ObjectId | any;
+  createdAt: string;
+  media: File | any;
+  _id?: string;
 };
