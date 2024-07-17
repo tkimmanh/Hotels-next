@@ -43,7 +43,7 @@ const roomsSchema = new mongoose.Schema(
   }
 );
 
-if (mongoose.models && mongoose.models["rooms"]) {
+if (mongoose.models["rooms"]) {
   delete mongoose.models["rooms"];
 }
 

@@ -94,7 +94,7 @@ export const Sidebar = ({ isShow, setIsShow, userData }: SidebarProps) => {
         {menuItemToShow.map((item, index) => {
           return (
             <button
-              className={`flex gap-x-4 items-center p-3 rounded-md w-full ${
+              className={` gap-x-4 items-center p-3 rounded-md w-full inline-flex ${
                 item.isActive ? "bg-gray-600 text-white" : ""
               }`}
               key={index}

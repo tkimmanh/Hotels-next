@@ -22,13 +22,17 @@ export async function createRoom(payload: any) {
 
 export async function getRooms() {
   try {
-    const result = await Rooms.find().populate("hotel").sort({ createdAt: -1 });
+    const result = await Rooms.find()
+      .populate("hotel") // Sửa lại từ "hotels" thành "hotel"
+      .sort({ createdAt: -1 });
     return {
       message: "Get rooms successfully",
       status: 200,
       data: JSON.parse(JSON.stringify(result)),
     };
   } catch (error) {
+    console.log("error", error);
+
     return {
       message: "Get rooms failed",
       status: 500,
@@ -38,13 +42,15 @@ export async function getRooms() {
 
 export async function getRoomById(id: string) {
   try {
-    const result = await Rooms.findById({ _id: id });
+    const result = await Rooms.findById({ _id: id }).populate("hotel"); // Sửa lại từ "hotels" thành "hotel"
     return {
       message: "Get room by id successfully",
       status: 200,
       data: JSON.parse(JSON.stringify(result)),
     };
   } catch (error) {
+    console.log("error", error);
+
     return {
       message: "Get room by id failed",
       status: 500,

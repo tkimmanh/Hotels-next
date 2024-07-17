@@ -11,6 +11,7 @@ const RoomsPageAdmin = async () => {
   if (response?.status === 200) {
     rooms = response.data;
   }
+
   return (
     <div className="mt-5">
       <div className="flex justify-between ">
