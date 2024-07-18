@@ -37,7 +37,7 @@ const BookingRooms = async ({ params }: BookingRoomsProps) => {
           <RoomInfor room={room}></RoomInfor>
         </div>
         <div className="col-span-1">
-          <CheckOut></CheckOut>
+          <CheckOut room={room as RoomsType}></CheckOut>
         </div>
       </div>
     </div>
