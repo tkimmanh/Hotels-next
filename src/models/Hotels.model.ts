@@ -32,7 +32,7 @@ const hotelSchema = new mongoose.Schema(
   }
 );
 
-if (mongoose.models && mongoose.models["hotels"]) {
+if (mongoose.models["hotels"]) {
   delete mongoose.models["hotels"];
 }
 

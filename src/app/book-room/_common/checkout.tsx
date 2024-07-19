@@ -1,16 +1,30 @@
 "use client";
-import { RoomsType } from "@/interfaces";
+import { HotelType, RoomsType } from "@/interfaces";
 import { checkRoomAvailability } from "@/servers/booking";
+import { getStripeClientSceret } from "@/servers/payment";
 import { Button, Form, Input, message } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import PaymentModal from "./payment-modal";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+);
 
 const CheckOut = ({ room }: { room: RoomsType }) => {
   const [checkIn, setCheckIn] = React.useState("");
   const [checkOut, setCheckOut] = React.useState("");
   const [isAvailable, setIsAvailable] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [totalDays, setTotalDays] = React.useState<number>(0);
+  const [totalAmount, setTotalAmount] = React.useState<number>(0);
+  const [clientSecret, setClientSecret] = React.useState<string>("");
+  const [showPaymentModal, setShowPaymentModal] =
+    React.useState<boolean>(false);
 
+  // kiểm tra giá phòng , và thời gian đặt
   const checkAvailability = async () => {
     try {
       setLoading(true);
@@ -22,6 +36,9 @@ const CheckOut = ({ room }: { room: RoomsType }) => {
       if (response?.success) {
         setIsAvailable(true);
         message.success("Room is available");
+        const totalDayTemp = dayjs(checkOut).diff(dayjs(checkIn), "day");
+        setTotalDays(totalDayTemp);
+        setTotalAmount(totalDayTemp * room.rentPerDay);
       } else {
         setIsAvailable(false);
         message.error("Room is not available");
@@ -32,7 +49,27 @@ const CheckOut = ({ room }: { room: RoomsType }) => {
       setLoading(false);
     }
   };
-  const onBookRoom = async () => {};
+
+  const onBookRoom = async () => {
+    try {
+      setLoading(true);
+      const response = await getStripeClientSceret({
+        price: totalAmount,
+      });
+      if (response?.success) {
+        setClientSecret(response.clientSecret);
+        setShowPaymentModal(true);
+      } else {
+        message.error("Something went wrong");
+      }
+    } catch (error) {
+      console.log("error", error);
+
+      message.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     setIsAvailable(false);
   }, [checkIn, checkOut]);
@@ -67,16 +104,47 @@ const CheckOut = ({ room }: { room: RoomsType }) => {
         </Button>
 
         {isAvailable && (
-          <Button
-            loading={loading}
-            onClick={onBookRoom}
-            type="primary"
-            className="w-full"
-          >
-            Book your room
-          </Button>
+          <>
+            <>
+              <div className="flex justify-between">
+                <span className="text-base font-bold">Total day : </span>
+                <span className="text-sm">{totalDays}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-base font-bold">Total Amount : </span>
+                <span className="text-sm">${totalAmount}</span>
+              </div>
+            </>
+
+            <Button
+              loading={loading}
+              onClick={onBookRoom}
+              type="primary"
+              className="w-full"
+            >
+              Book your room
+            </Button>
+          </>
         )}
       </Form>
+      {clientSecret && showPaymentModal && (
+        <Elements
+          stripe={stripePromise}
+          options={{
+            clientSecret,
+          }}
+        >
+          <PaymentModal
+            room={room}
+            showPaymentModal={showPaymentModal}
+            setShowPaymentModal={setShowPaymentModal}
+            checkInDate={checkIn}
+            checkOutDate={checkOut}
+            totalAmount={totalAmount}
+            totalDays={totalDays}
+          ></PaymentModal>
+        </Elements>
+      )}
     </div>
   );
 };
