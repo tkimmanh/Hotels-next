@@ -90,6 +90,15 @@ const PaymentModal = ({
           <AddressElement
             options={{
               mode: "billing",
+              defaultValues: {
+                address: {
+                  postal_code: "19122",
+                  city: "Philadelphia",
+                  state: "Philadelpvia",
+                  line1: "1234 Market St",
+                  country: "US",
+                },
+              },
               allowedCountries: ["US"],
             }}
           />

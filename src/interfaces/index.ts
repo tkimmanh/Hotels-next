@@ -40,3 +40,17 @@ export type RoomsType = {
   media: File | any;
   _id?: string;
 };
+
+export interface BookingType {
+  _id: string;
+  user: UserType;
+  hotel: HotelType;
+  room: RoomsType;
+  paymentId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalAmount: number;
+  createdAt: string;
+  updatedAt: string;
+  bookingStatus: "Booked" | "Cancelled";
+}
