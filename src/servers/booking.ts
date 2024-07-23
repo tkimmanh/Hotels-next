@@ -7,6 +7,7 @@ import Rooms from "@/models/Rooms.model";
 import { getCurrentUser } from "./users";
 import { revalidatePath } from "next/cache";
 import Users from "@/models/Users.model";
+import dayjs from "dayjs";
 
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SCERET_KEY);
 
@@ -189,6 +190,42 @@ export const getAvaliableRooms = async ({
       return {
         status: 200,
         data: JSON.parse(JSON.stringify(rooms)),
+      };
+    }
+  } catch (error: any) {
+    return {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+export const reportBooking = async ({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}) => {
+  try {
+    if (Hotels && Rooms && Booking) {
+      const query: any = { bookingStatus: "Booked" };
+
+      if (startDate && endDate) {
+        query.createdAt = {
+          $gte: dayjs(startDate).startOf("day").toDate(),
+          $lte: dayjs(endDate).endOf("day").toDate(),
+        };
+      }
+
+      const bookingReport = await Booking.find(query)
+        .populate("room")
+        .populate("user")
+        .populate("hotel");
+
+      return {
+        status: 200,
+        data: JSON.parse(JSON.stringify(bookingReport)),
       };
     }
   } catch (error: any) {
