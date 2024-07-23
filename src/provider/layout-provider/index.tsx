@@ -19,6 +19,8 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   const isAuthRoute =
     pathname.includes("/sign-in") || pathname.includes("/sign-up");
 
+  const isAdminRoute = pathname.includes("/admin");
+
   const getUserData = async () => {
     try {
       setIsLoading(true);
@@ -39,6 +41,14 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  if (loginUserData && isAdminRoute && !loginUserData.isAdmin) {
+    return (
+      <>
+        <Header loginUserData={loginUserData}></Header>
+      </>
+    );
+  }
+
   if (isLoading) {
     return <Spinner fullHeight={true}></Spinner>;
   }
@@ -46,7 +56,7 @@ export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       {!isAuthRoute && <Header loginUserData={loginUserData}></Header>}
-      <div className="lg:px-20">{children}</div>
+      <div className="lg:px-20 px-5">{children}</div>
     </div>
   );
 };

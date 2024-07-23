@@ -9,6 +9,7 @@ import {
   List,
   LogOut,
   User,
+  User2,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
@@ -43,8 +44,8 @@ export const Sidebar = ({ isShow, setIsShow, userData }: SidebarProps) => {
     {
       name: "Booking",
       icon: <List size={size}></List>,
-      onclick: () => router.push("/user/booking"),
-      isActive: pathname === "/user/booking",
+      onclick: () => router.push("/user/bookings"),
+      isActive: pathname === "/user/bookings",
     },
     {
       name: "Profile",
@@ -65,7 +66,13 @@ export const Sidebar = ({ isShow, setIsShow, userData }: SidebarProps) => {
       name: "Booking",
       icon: <List size={size}></List>,
       onclick: () => router.push("/admin/bookings"),
-      isActive: pathname === "/admin/booking",
+      isActive: pathname === "/admin/bookings",
+    },
+    {
+      name: "Users",
+      icon: <User2 size={size}></User2>,
+      onclick: () => router.push("/admin/users"),
+      isActive: pathname === "/admin/users",
     },
     {
       name: "Hotels",

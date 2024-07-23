@@ -101,7 +101,7 @@ const UserBookingTable = ({ booking }: { booking: BookingType[] }) => {
             disabled={recode.bookingStatus === "Cancelled"}
             onClick={() => onCancelBooking(recode)}
             type="primary"
-            className="text-red-500 border"
+            className="border"
           >
             Cancel
           </Button>
