@@ -6,6 +6,7 @@ import Hotels from "@/models/Hotels.model";
 import Rooms from "@/models/Rooms.model";
 import { getCurrentUser } from "./users";
 import { revalidatePath } from "next/cache";
+import Users from "@/models/Users.model";
 
 const stripe = require("stripe")(process.env.NEXT_PUBLIC_STRIPE_SCERET_KEY);
 
@@ -106,6 +107,93 @@ export const cancelBooking = async ({
   } catch (error: any) {
     return {
       success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const listBookings = async () => {
+  try {
+    if (Rooms && Hotels && Users) {
+      const booking = await Booking.find()
+        .populate("room")
+        .populate("hotel")
+        .populate("user")
+        .sort({ createdAt: -1 });
+      return {
+        status: 200,
+        data: JSON.parse(JSON.stringify(booking)),
+      };
+    }
+  } catch (error: any) {
+    return {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+export const getAvaliableRooms = async ({
+  reqCheckInDate,
+  reqCheckOutDate,
+  type,
+}: {
+  reqCheckInDate: string;
+  reqCheckOutDate: string;
+  type: string;
+}) => {
+  try {
+    if (Hotels) {
+      if (!reqCheckInDate || !reqCheckOutDate) {
+        const room = await Rooms.find({
+          ...(type && { roomType: type }),
+        }).populate("hotel");
+        return {
+          status: 200,
+          data: JSON.parse(JSON.stringify(room)),
+        };
+      }
+    }
+
+    const bookedSlots = await Booking.find({
+      bookingStatus: "Booked",
+      $or: [
+        {
+          checkInDate: {
+            $gte: reqCheckInDate,
+            $lte: reqCheckOutDate,
+          },
+        },
+        {
+          checkOutDate: {
+            $gte: reqCheckInDate,
+            $lte: reqCheckOutDate,
+          },
+        },
+        {
+          $and: [
+            { checkInDate: { $lte: reqCheckInDate } },
+            { checkOutDate: { $gte: reqCheckOutDate } },
+          ],
+        },
+      ],
+    });
+
+    const bookedRoomIds = bookedSlots.map((booking) => booking.room);
+
+    if (Hotels) {
+      const rooms = await Rooms.find({
+        _id: { $nin: bookedRoomIds },
+        ...(type && { roomType: type }),
+      }).populate("hotel");
+      return {
+        status: 200,
+        data: JSON.parse(JSON.stringify(rooms)),
+      };
+    }
+  } catch (error: any) {
+    return {
+      status: 500,
       message: error.message,
     };
   }

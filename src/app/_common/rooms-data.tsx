@@ -1,13 +1,27 @@
 import { RoomsType } from "@/interfaces";
-import { getRooms } from "@/servers/rooms";
+import { getAvaliableRooms } from "@/servers/booking";
+
 import { Bath, BookUser, Timer, Trees } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const RoomsData = async () => {
+const RoomsData = async ({
+  searchParams,
+}: {
+  searchParams: {
+    checkIn: string;
+    checkOut: string;
+    type: string;
+  };
+}) => {
   let rooms: RoomsType[] = [];
-  const response = await getRooms();
+
+  const response = await getAvaliableRooms({
+    reqCheckInDate: searchParams.checkIn || "",
+    reqCheckOutDate: searchParams.checkOut || "",
+    type: searchParams.type || "",
+  });
 
   if (response?.status === 200) {
     rooms = response.data;

@@ -64,7 +64,7 @@ export const Sidebar = ({ isShow, setIsShow, userData }: SidebarProps) => {
     {
       name: "Booking",
       icon: <List size={size}></List>,
-      onclick: () => router.push("/admin/booking"),
+      onclick: () => router.push("/admin/bookings"),
       isActive: pathname === "/admin/booking",
     },
     {
